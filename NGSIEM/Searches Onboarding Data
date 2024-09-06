@@ -1,0 +1,11 @@
+journalctl - u humeo log collector service errors
+
+##List Returned Fields
+ #type = "syslog-siem-210"
+| fieldset()
+| sort(field, order=asc)
+
+##Display of vendor message fields unique values
+
+ #type = "syslog-siem-210"
+| groupBy([Vendor.message], function= [], limit=max)
