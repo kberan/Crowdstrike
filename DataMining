@@ -28,3 +28,15 @@ Remove NaN from TOTAL INJUREDcrash_df = crash_df.dropna(axis=0, subset=['total_i
 # ((Codeblock Twelve))# Combine DATE and TIME column to transform Series to DateTime needed for further analysiscrash_df['date'] = crash_df['crash_date'] + ' ' + crash_df['crash_time']
 
 # ((Codeblock Thirteen))# Convert string to DateTimecrash_df['date'] = pd.to_datetime(crash_df.date)
+
+# ((Codeblock Fourteen))# Year filtercrash_df['year'] = pd.to_datetime(crash_df['date']).dt.year
+
+# ((Codeblock Fifteen))# Quarter filtercrash_df['quarter'] = pd.to_datetime(crash_df['date']).dt.quarter
+
+# ((Codeblock Sixteen))# Month filtercrash_df['month'] = pd.to_datetime(crash_df['date']).dt.month
+
+# ((Codeblock Seventeen))# Day of the week filtercrash_df['weekday'] = pd.to_datetime(crash_df['date']).dt.weekday
+
+# ((Codeblock Eighteen))#Fill in missing values with Emptycrash_df = crash_df.fillna(value='EMPTY')
+
+# ((Codeblock Nineteenth))# Validate the final dataset before analysiscrash_df.info(verbose = True, show_counts = True)# We have ~430k relevant records instead of 1.9 million and our file is ~100 MB from ~400 MB at the beginning of preparation# This file is in a much better state to ingest into LogScale and begin working with a sample of the data.# Additionally, we have are steps to clean the data within LogScale via parser as ingest is streaming via API.
