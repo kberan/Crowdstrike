@@ -1,0 +1,14 @@
+# ((Codeblock One))
+import pandas as pd
+
+# ((Codeblock Two))
+#Load the NYPD Motor Collisions filecrash_df = pd.read_csv("/Users/Administrator/Documents/Motor_Vehicle_Collisions_-_Crashes.csv")
+
+# ((Codeblock Three))
+crash_df.info(verbose = True, show_counts = True)
+
+# ((Codeblock Four))
+crash_df.rename(columns = {          'CRASH DATE' : 'crash_date',        'CRASH TIME' : 'crash_time',        'BOROUGH' : 'borough',        'ZIP CODE' : 'zip_code',        'LATITUDE' : 'latitude',        'LONGITUDE' : 'longitude',        'LOCATION' : 'location',        'ON STREET NAME'    : 'street_on',        'CROSS STREET NAME' : 'street_cross',        'OFF STREET NAME'   : 'street_off',        'NUMBER OF PERSONS INJURED'     : 'total_injured',        'NUMBER OF PERSONS KILLED'      : 'total_fatality',        'NUMBER OF PEDESTRIANS INJURED' : 'ped_injured',        'NUMBER OF PEDESTRIANS KILLED'  : 'ped_fatality',        'NUMBER OF CYCLIST INJURED'     : 'cyc_injured',        'NUMBER OF CYCLIST KILLED'      : 'cyc_fatality',        'NUMBER OF MOTORIST INJURED'    : 'moto_injured',        'NUMBER OF MOTORIST KILLED'     : 'moto_fatality',        'CONTRIBUTING FACTOR VEHICLE 1' : 'veh_factor_1',        'CONTRIBUTING FACTOR VEHICLE 2' : 'veh_factor_2',        'CONTRIBUTING FACTOR VEHICLE 3' : 'veh_factor_3',        'CONTRIBUTING FACTOR VEHICLE 4' : 'veh_factor_4',        'CONTRIBUTING FACTOR VEHICLE 5' : 'veh_factor_5',        'COLLISION_ID' : 'collision_id',        'VEHICLE TYPE CODE 1' : 'veh_type_1',        'VEHICLE TYPE CODE 2' : 'veh_type_2',        'VEHICLE TYPE CODE 3' : 'veh_type_3',        'VEHICLE TYPE CODE 4' : 'veh_type_4',        'VEHICLE TYPE CODE 5' : 'veh_type_5'}, inplace = True)
+
+# ((Codeblock Five))# 
+Find all the keys with missing values and validate our data model changescrash_df.isna().sum()
