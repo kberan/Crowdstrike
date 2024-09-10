@@ -12,3 +12,19 @@ crash_df.rename(columns = {          'CRASH DATE' : 'crash_date',        'CRASH 
 
 # ((Codeblock Five))# 
 Find all the keys with missing values and validate our data model changescrash_df.isna().sum()
+
+# ((Codeblock Seven))# 
+Remove NaN from TOTAL INJUREDcrash_df = crash_df.dropna(axis=0, subset=['total_injured'])
+
+# ((Codeblock Eight))# Remove NaN from TOTAL KILLEDcrash_df = crash_df.dropna(axis=0, subset=['total_fatality'])
+
+# ((Codeblock Nine))# If we are interested in collisions that have injuries, then we may  want to keep those values > 0 as df1df1 = crash_df[(crash_df['total_injured'] > 0)]
+
+# ((Codeblock Ten))# If we are interested in the collisions that have fatalities, then we may want to keep those values > 0 as df2df2 = crash_df[(crash_df['total_fatality'] > 0)]
+
+
+# ((Codeblock Eleven))# To keep only those records with either injuries or fatalities we can  now concatenate df1 and df2 and put it back as dfcrash_df = pd.concat([df1, df2])
+
+# ((Codeblock Twelve))# Combine DATE and TIME column to transform Series to DateTime needed for further analysiscrash_df['date'] = crash_df['crash_date'] + ' ' + crash_df['crash_time']
+
+# ((Codeblock Thirteen))# Convert string to DateTimecrash_df['date'] = pd.to_datetime(crash_df.date)
