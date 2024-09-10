@@ -40,3 +40,5 @@ Remove NaN from TOTAL INJUREDcrash_df = crash_df.dropna(axis=0, subset=['total_i
 # ((Codeblock Eighteen))#Fill in missing values with Emptycrash_df = crash_df.fillna(value='EMPTY')
 
 # ((Codeblock Nineteenth))# Validate the final dataset before analysiscrash_df.info(verbose = True, show_counts = True)# We have ~430k relevant records instead of 1.9 million and our file is ~100 MB from ~400 MB at the beginning of preparation# This file is in a much better state to ingest into LogScale and begin working with a sample of the data.# Additionally, we have are steps to clean the data within LogScale via parser as ingest is streaming via API.
+
+# ((Codeblock Twenty))# Save the cleaned dataframe to a new CSV Filecrash_df.to_csv("/Users/Administrator/Documents/clean_nyc_crash.csv", index=False)
