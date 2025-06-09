@@ -1,0 +1,4 @@
+Example of concatonating Timestamps with timezone
+
+| temp.ts"=concat(rawts,@collect.timezone)
+| parseTimestamp(field="@temp.ts", format="MM/dd/yy HH:mm:ss", timezone=@collect.timezone) | drop (temp.ts)
