@@ -1,0 +1,147 @@
+# CrowdStrike Pagination Script Usage Guide
+
+## Overview
+The updated `query_unmanaged_unsupported_hostV2.py` script now supports cursor-based pagination to retrieve ALL available records (7,342+) from the CrowdStrike Falcon API.
+
+## Key Changes Made
+
+### 1. Cursor-Based Pagination
+- Replaced `offset` parameter with `after` parameter for proper cursor-based pagination
+- Increased maximum limit from 100 to 1000 records per request
+- Added `query_all_hosts_paginated()` function to handle automatic pagination
+
+### 2. Enhanced Features
+- **Progress Tracking**: Shows real-time progress during pagination
+- **Error Handling**: Robust error handling for pagination failures
+- **Safety Limits**: Prevents infinite loops with maximum page limit
+- **Flexible Modes**: Single-page mode for testing, full pagination for production
+
+### 3. Improved Logging
+- Detailed pagination progress logs
+- Summary statistics after completion
+- Better error reporting
+
+## Usage Examples
+
+### Retrieve All Records (Default)
+```bash
+python query_unmanaged_unsupported_hostV2.py \
+    --client-id YOUR_CLIENT_ID \
+    --client-secret YOUR_CLIENT_SECRET \
+    --output-file all_hosts.csv
+```
+
+### Test with Single Page (1000 records max)
+```bash
+python query_unmanaged_unsupported_hostV2.py \
+    --client-id YOUR_CLIENT_ID \
+    --client-secret YOUR_CLIENT_SECRET \
+    --single-page \
+    --output-file test_page.csv
+```
+
+### Custom Limit per Page
+```bash
+python query_unmanaged_unsupported_hostV2.py \
+    --client-id YOUR_CLIENT_ID \
+    --client-secret YOUR_CLIENT_SECRET \
+    --limit 500 \
+    --output-file hosts_500_per_page.csv
+```
+
+### With Sorting
+```bash
+python query_unmanaged_unsupported_hostV2.py \
+    --client-id YOUR_CLIENT_ID \
+    --client-secret YOUR_CLIENT_SECRET \
+    --sort "last_seen_timestamp|desc" \
+    --output-file hosts_sorted.csv
+```
+
+### Debug Mode
+```bash
+python query_unmanaged_unsupported_hostV2.py \
+    --client-id YOUR_CLIENT_ID \
+    --client-secret YOUR_CLIENT_SECRET \
+    --log-level DEBUG \
+    --output-file debug_hosts.csv
+```
+
+## Expected Output
+
+### Console Output
+```
+2025-09-03 11:00:00,000 - INFO - Successfully obtained auth token
+2025-09-03 11:00:01,000 - INFO - Paginated mode - retrieving all available records
+2025-09-03 11:00:02,000 - INFO - Fetching page 1...
+2025-09-03 11:00:03,000 - INFO - Total records available: 7342
+2025-09-03 11:00:04,000 - INFO - Page 1: Retrieved 1000 records. Total so far: 1000/7342
+2025-09-03 11:00:05,000 - INFO - Fetching page 2...
+2025-09-03 11:00:06,000 - INFO - Page 2: Retrieved 1000 records. Total so far: 2000/7342
+...
+2025-09-03 11:00:30,000 - INFO - Page 8: Retrieved 342 records. Total so far: 7342/7342
+2025-09-03 11:00:31,000 - INFO - No more pages available. Pagination complete.
+2025-09-03 11:00:32,000 - INFO - Pagination complete. Retrieved 7342 total records across 8 pages.
+2025-09-03 11:00:33,000 - INFO - Query complete. Retrieved 7342 records out of 7342 available.
+2025-09-03 11:00:34,000 - INFO - Results saved to results.csv
+2025-09-03 11:00:35,000 - INFO - CSV contains 7342 host records
+Successfully retrieved 7342 host records and saved to results.csv
+```
+
+### CSV Output
+The CSV file will contain all records with the same format as before:
+```csv
+Host ID,Hostname,First Seen,Last Seen,Entity Type,MAC Address,Local IP Addresses,Discovered By
+5ddb0407bef249c19c7a975f17979a1f_ffe2b77eb92432a885892cbf3e09f39d,--,2025-08-30 17:00:00,2025-08-30 17:00:00,unmanaged,00-50-56-81-73-A1,10.157.129.212,FFV-MM12-02
+...
+```
+
+## Command Line Arguments
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--client-id` | Required | CrowdStrike API client ID |
+| `--client-secret` | Required | CrowdStrike API client secret |
+| `--base-url` | api.crowdstrike.com | CrowdStrike API base URL |
+| `--limit` | 1000 | Records per page (max: 1000) |
+| `--sort` | None | Sort field and direction |
+| `--output-file` | results.csv | Output CSV file name |
+| `--log-level` | INFO | Logging level |
+| `--single-page` | False | Retrieve only first page (testing) |
+
+## Performance Expectations
+
+- **7,342 records**: ~8 pages at 1000 records per page
+- **Estimated time**: 30-60 seconds depending on network speed
+- **Memory usage**: Minimal - processes one page at a time
+- **API calls**: ~8 requests total (one per page)
+
+## Error Handling
+
+The script includes robust error handling for:
+- Authentication failures
+- Network timeouts
+- Invalid pagination tokens
+- API rate limits
+- Partial data retrieval
+
+## Testing Recommendations
+
+1. **Start with single-page mode** to verify authentication and basic functionality
+2. **Use a smaller limit** (e.g., 100) for initial testing
+3. **Check the log output** to monitor pagination progress
+4. **Verify CSV record count** matches the total reported by the API
+
+## Troubleshooting
+
+### Common Issues
+- **Authentication errors**: Verify client ID and secret
+- **Network timeouts**: Check firewall and proxy settings
+- **Incomplete results**: Check logs for pagination errors
+- **Large file sizes**: 7,342+ records will create a substantial CSV file
+
+### Debug Steps
+1. Run with `--log-level DEBUG` for detailed output
+2. Use `--single-page` to test basic functionality
+3. Check the API response format if pagination fails
+4. Verify the 'after' token is being passed correctly between requests
