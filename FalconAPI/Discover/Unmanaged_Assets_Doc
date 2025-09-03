@@ -1,75 +1,141 @@
-# CrowdStrike Pagination Script Usage Guide
+Unmanaged and Unsupported Assets Script Documentation
+
+
+
+# CrowdStrike Unmanaged & Unsupported Hosts Discovery Utility
+
+**IMPORTANT DISCLAIMER**
+- This script was created by CrowdStrike Professional Services team
+- This is a custom utility and not an official CrowdStrike product
+- Please test thoroughly in a development environment before using in any customer project
+- Use at your own risk and validate results before implementing in production
+- No warranty or guarantee is provided for this script
+
+A Python script for identifying and reporting unmanaged and unsupported hosts in your environment using the CrowdStrike Discover API.
 
 ## Overview
-The updated `query_unmanaged_unsupported_hostV2.py` script now supports cursor-based pagination to retrieve ALL available records (7,342+) from the CrowdStrike Falcon API.
 
-## Key Changes Made
+This utility provides a command-line interface for:
+- Querying unmanaged and unsupported hosts
+- Retrieving detailed host information
+- Exporting results in CSV format
+- Tracking discovery timestamps and network details
 
-### 1. Cursor-Based Pagination
-- Replaced `offset` parameter with `after` parameter for proper cursor-based pagination
-- Increased maximum limit from 100 to 1000 records per request
-- Added `query_all_hosts_paginated()` function to handle automatic pagination
+## Prerequisites
 
-### 2. Enhanced Features
-- **Progress Tracking**: Shows real-time progress during pagination
-- **Error Handling**: Robust error handling for pagination failures
-- **Safety Limits**: Prevents infinite loops with maximum page limit
-- **Flexible Modes**: Single-page mode for testing, full pagination for production
+- Python 3.6 or higher
+- CrowdStrike API credentials (Client ID and Secret)
+- Required Python packages:
+  - requests
+  - datetime
 
-### 3. Improved Logging
-- Detailed pagination progress logs
-- Summary statistics after completion
-- Better error reporting
+## Installation
 
-## Usage Examples
-
-### Retrieve All Records (Default)
+1. Install required packages:
 ```bash
-python query_unmanaged_unsupported_hostV2.py \
+pip install requests
+```
+
+2. Clone or download the script
+
+## Usage
+
+Basic usage:
+```bash
+python query_unmanaged_unsupported_host.py \
+    --client-id YOUR_CLIENT_ID \
+    --client-secret YOUR_CLIENT_SECRET \
+    --output-file results.csv
+```
+
+### Command Line Arguments
+
+Argument
+Default
+Description
+--client-id
+ Required
+CrowdStrike API client ID
+--client-secret
+ Required
+CrowdStrike API client secret
+--base-url
+ api.crowdstrike.com
+CrowdStrike API base URL
+--limit
+ 1000
+Records per page (max: 1000)
+--sort
+ None
+Sort field and direction
+--output-file
+ results.csv
+Output CSV file name
+--log-level
+ INFO
+Logging level
+--single-page
+ False
+Retrieve only first page (testing)
+
+
+### CSV Output Format
+
+The script generates a CSV file with the following columns:
+- Host ID
+- Hostname 
+- First Seen
+- Last Seen
+- Entity Type
+- MAC Address
+- Local IP Addresses
+- Discovered By
+
+## Examples
+
+
+# Retrieve All Records (Default)
+python3 query_unmanaged_unsupported_hostV2.py \
     --client-id YOUR_CLIENT_ID \
     --client-secret YOUR_CLIENT_SECRET \
     --output-file all_hosts.csv
-```
 
-### Test with Single Page (1000 records max)
-```bash
-python query_unmanaged_unsupported_hostV2.py \
+# Test with Single Page (1000 records max)
+python3 query_unmanaged_unsupported_hostV2.py \
     --client-id YOUR_CLIENT_ID \
     --client-secret YOUR_CLIENT_SECRET \
     --single-page \
     --output-file test_page.csv
-```
 
-### Custom Limit per Page
-```bash
-python query_unmanaged_unsupported_hostV2.py \
+# Custom Limit per Page
+python3 query_unmanaged_unsupported_hostV2.py \
     --client-id YOUR_CLIENT_ID \
     --client-secret YOUR_CLIENT_SECRET \
     --limit 500 \
     --output-file hosts_500_per_page.csv
-```
 
-### With Sorting
-```bash
-python query_unmanaged_unsupported_hostV2.py \
+# With Sorting
+python3 query_unmanaged_unsupported_hostV2.py \
     --client-id YOUR_CLIENT_ID \
     --client-secret YOUR_CLIENT_SECRET \
     --sort "last_seen_timestamp|desc" \
     --output-file hosts_sorted.csv
-```
 
-### Debug Mode
-```bash
-python query_unmanaged_unsupported_hostV2.py \
+# Debug Mode
+python3 query_unmanaged_unsupported_hostV2.py \
     --client-id YOUR_CLIENT_ID \
     --client-secret YOUR_CLIENT_SECRET \
     --log-level DEBUG \
     --output-file debug_hosts.csv
-```
+
+
 
 ## Expected Output
 
 ### Console Output
+
+
+
 ```
 2025-09-03 11:00:00,000 - INFO - Successfully obtained auth token
 2025-09-03 11:00:01,000 - INFO - Paginated mode - retrieving all available records
@@ -86,28 +152,17 @@ python query_unmanaged_unsupported_hostV2.py \
 2025-09-03 11:00:34,000 - INFO - Results saved to results.csv
 2025-09-03 11:00:35,000 - INFO - CSV contains 7342 host records
 Successfully retrieved 7342 host records and saved to results.csv
-```
+
+
 
 ### CSV Output
 The CSV file will contain all records with the same format as before:
-```csv
+
+
+
 Host ID,Hostname,First Seen,Last Seen,Entity Type,MAC Address,Local IP Addresses,Discovered By
 5ddb0407bef249c19c7a975f17979a1f_ffe2b77eb92432a885892cbf3e09f39d,--,2025-08-30 17:00:00,2025-08-30 17:00:00,unmanaged,00-50-56-81-73-A1,10.157.129.212,FFV-MM12-02
-...
-```
 
-## Command Line Arguments
-
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--client-id` | Required | CrowdStrike API client ID |
-| `--client-secret` | Required | CrowdStrike API client secret |
-| `--base-url` | api.crowdstrike.com | CrowdStrike API base URL |
-| `--limit` | 1000 | Records per page (max: 1000) |
-| `--sort` | None | Sort field and direction |
-| `--output-file` | results.csv | Output CSV file name |
-| `--log-level` | INFO | Logging level |
-| `--single-page` | False | Retrieve only first page (testing) |
 
 ## Performance Expectations
 
@@ -145,3 +200,53 @@ The script includes robust error handling for:
 2. Use `--single-page` to test basic functionality
 3. Check the API response format if pagination fails
 4. Verify the 'after' token is being passed correctly between requests
+
+
+
+## Known Issues and Limitations
+
+1. **Hostname Field Implementation**
+   - Current behavior: Shows the first discoverer hostname
+   - Users should not rely on current hostname values for critical operations
+
+## Output Format Details
+
+### CSV Fields
+- **Host ID**: Unique identifier for the host
+- **Hostname**: Currently displays first discoverer hostname (NOTE: Implementation under review)
+- **First Seen**: Initial discovery timestamp
+- **Last Seen**: Most recent detection timestamp
+- **Entity Type**: 'unmanaged' or 'unsupported'
+- **MAC Address**: Device MAC address(es)
+- **Local IP Addresses**: All associated IP addresses
+- **Discovered By**: Hostnames of discovering systems
+
+## Logging
+
+The script includes comprehensive logging:
+- Authentication status
+- Query execution details
+- Result counts
+- Export confirmation
+- Error messages
+
+## Error Handling
+
+The script handles various error conditions:
+- API authentication failures
+- Query execution errors
+- Invalid parameters
+- File export issues
+- Data parsing problems
+
+
+## Notes
+
+- Multiple MAC addresses and IP addresses are separated by '|' in CSV output
+- Timestamps are converted to readable format (UTC)
+- Results are automatically saved with .csv extension if not specified
+- API rate limits are respected
+- Pagination is supported for large result sets
+
+
+
