@@ -1,0 +1,33 @@
+app_id: fb04a9937d3d4fb89a552779ad756ac9
+name: AlienVault OTX
+description: Query Indicators of Compromise in AlienVault OTX.
+logo: ""
+vendor: ""
+vendor_products: []
+use_case: ""
+manifest_version: "2023-05-09"
+ignored: []
+ui:
+    homepage: ""
+    extensions: []
+    pages: {}
+    dashboards: {}
+    navigation: {}
+api_integrations:
+    - id: 051317ef2bf54255b581805d5f468f5e
+      name: AlienVault OTX
+      description: ""
+      path: api-integrations/AlienVault_OTX.json
+rtr_scripts: []
+collections: []
+auth:
+    scopes: []
+    permissions: {}
+    roles: []
+functions: []
+workflows: []
+parsers: []
+logscale:
+    saved_searches: []
+lookup_files: []
+docs: {}
